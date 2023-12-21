@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <regex>
 #include <string>
 #include <vector>
@@ -27,6 +28,12 @@ public:
 			++rit;
 		}
 	}
+	void add_if_larger(const string& key, int i)
+	{
+		cubes.try_emplace(key, i);
+		if (cubes[key] < i) cubes[key] = i;
+	}
+
 };
 
 class game
@@ -44,22 +51,34 @@ public:
 			++rit;
 		}
 	}
+
+	subset min_set() const
+	{
+		subset min;
+		for (const auto& set : subsets)
+		{
+			for (const auto& color : set.cubes)
+			{
+				auto key = color.first;
+				const auto num = color.second;
+				min.add_if_larger(key, num);
+			}
+		}
+		return min;
+	}
+
+	int power() const
+	{
+		auto cubes = min_set().cubes;
+		return accumulate(begin(cubes)
+			, end(cubes)
+			, 1
+			, [] (const int value, const map<string, int>::value_type& p)
+			{ return value * p.second; }
+		);
+	}
 };
 
-static bool is_possible(const game& game, const subset& actual)
-{
-	for(auto set : game.subsets)
-	{
-		for(const auto& color : actual.cubes)
-		{
-			auto key = color.first;
-			const auto max = color.second;
-			const auto game_num = set.cubes[key];
-			if (game_num > max)return false;
-		}
-	}
-	return true;
-}
 
 
 
@@ -67,24 +86,19 @@ void day2::run()
 {
 	int sum = 0;
 	vector<game> games;
-	std::ifstream file("day2_input.txt");
+	ifstream file("day2_input.txt");
 	if (file.is_open())
 	{
-		std::string line;
-		while (std::getline(file, line))
+		string line;
+		while (getline(file, line))
 		{
 			games.emplace_back(line);
 		}
 	}
 	file.close();
-	int i = 1;
 	for(const auto& game : games)
 	{
-		if(is_possible(game, subset("12 red cubes, 13 green cubes, and 14 blue cubes")))
-		{
-			sum += i;
-		}
-		++i;
+		sum += game.power();
 	}
-	std::cout << sum;
+	cout << sum;
 }
