@@ -13,7 +13,6 @@ public:
 	string name;
 	int num;
 	number(string name, const int num) :name(std::move(name)), num(num) {  }
-	
 };
 
 

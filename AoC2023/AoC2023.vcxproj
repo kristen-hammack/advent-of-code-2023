@@ -141,9 +141,11 @@
   <ItemGroup>
     <ClCompile Include="AoC2023.cpp" />
     <ClCompile Include="day1.cpp" />
+    <ClCompile Include="day2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="day1.h" />
+    <ClInclude Include="day2.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="day1_input.txt" />
