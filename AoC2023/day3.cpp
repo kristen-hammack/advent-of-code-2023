@@ -32,7 +32,7 @@ string::const_iterator get_next_star(const string::const_iterator& first, const 
 	return find_if(first, last, search);
 }
 
-tuple<int,int,int> get_next_int(string::const_iterator first, string::const_iterator last)
+tuple<int,int,int> get_next_int(const string::const_iterator& first, const string::const_iterator& last)
 {
 	int answer = -1;
 	int length = 0;
@@ -74,54 +74,6 @@ tuple<int, string::const_iterator> get_int_next_to(const int index, const string
 	if (answer < 0) it_return = last;
 	else it_return = first + start_index;
 	return make_tuple(answer, it_return);
-}
-
-int get_power(int index, string before, string line, string after)
-{
-	auto is_digit = [](const char c) {return c >= '0' && c <= '9'; };
-	for (int i = 0; i < 2; ++i)
-	{
-		auto found = 0;
-		auto first_b = begin(before);
-		auto first_l = begin(line);
-		auto first_a = begin(after);
-		while(found<2)
-		{
-			//for each line
-			//get the pointer to the next digit
-			//until/unless we hit the end:
-				//if this digit touches the given gear, count it as found
-				//
-			first_b = find_if(first_b, end(before), is_digit);
-			while (first_b != end(before))
-			{
-				if (is_digit(*first_b))
-				{
-int diff = distance(begin(before), first_b);
-				if (diff >= index - 1 && diff < +index + 1)++found;
-					++first_b;
-				}
-				else { break; }
-				
-			}
-
-			first_l = find_if(first_l, end(line), is_digit);
-			while (first_l != end(line))
-			{
-				if (distance(first_l, first_l) == index)++found;
-				if (is_digit(*first_l))++first_l;
-			}
-
-			first_a = find_if(first_a, end(after), is_digit);
-			while (first_a != end(after))
-			{
-				if (distance(first_a, first_a) == index)++found;
-				if (is_digit(*first_a))++first_a;
-			}
-		}
-		
-	}
-	return 0;
 }
 
 string get_padded_string(const string& str)
@@ -185,6 +137,38 @@ int do_work(ifstream& file)
 	}
 }
 
+int get_gear_power(const string& before, const string& star_line, const string& after,	const size_t star_index, string::const_iterator& first)
+{
+	int gear_power = 0;
+	int result;
+	int nums_found = 0;
+	for (auto line : { before,star_line,after })
+	{
+		first = begin(line);
+		auto last = end(line);
+		while (first != last)
+		{
+			tie(result, first) = get_int_next_to(star_index, first, last);
+			if (result >= 0) {
+				if (gear_power == 0)
+				{
+					gear_power = result;
+					++nums_found;
+				}
+				else
+				{
+					gear_power *= result;
+					++nums_found;
+					break;
+				}
+			}
+			else break;
+		}
+		if (nums_found > 1)break;
+	}
+	return gear_power;
+}
+
 void day3::run()
 {
 	int sum = 0;
@@ -215,36 +199,7 @@ void day3::run()
 		sum += result;
 	}
 
-	int gear_power = 0;
-	int num1 = -1, num2 = -1;
-	int nums_found = 0;
-	for (auto line : { line2,line3,line4 })
-	{
-		first = begin(line);
-		auto last = end(line);
-		while (first != last)
-		{
-			tie(result, first) = get_int_next_to(star_index, first, last);
-			if (result >= 0) {
-				if (gear_power == 0)
-				{
-					gear_power = result;
-					num1 = result;
-					++nums_found;
-				}
-				else
-				{
-					gear_power *= result;
-					num2 = result;
-					++nums_found;
-					break;
-				}
-			}
-			else break;
-		}
-		if (nums_found > 1)break;
-	}
-	cout << "Numbers found for gear: " << num1 << " and " << num2 << endl;
+	const int gear_power = get_gear_power(line2, line3, line4, star_index, first);
 	cout << "Gear Power: " << gear_power << endl;
 
 	//b = scan(begin(line2), end(line2));
