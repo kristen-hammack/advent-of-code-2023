@@ -5,12 +5,13 @@
 #include <iterator>
 #include <regex>
 #include <string>
+#include <tuple>
 using namespace std;
 //count number of separate numbers found in the area
 int scan(const string::const_iterator& first, const string::const_iterator& last)
 {
 	const regex r("\\d+");
-	auto result_begin = sregex_iterator(first, last, r);
+	auto result_begin = sregex_iterator(first, last+1, r);
 	auto result_end = sregex_iterator();
 	return distance(result_begin, result_end);
 }
@@ -31,27 +32,49 @@ string::const_iterator get_next_star(const string::const_iterator& first, const 
 	return find_if(first, last, search);
 }
 
-tuple<int, string::const_iterator> get_int_next_to(const int index, const string& line)
+tuple<int,int,int> get_next_int(string::const_iterator first, string::const_iterator last)
 {
-	auto first = get_next_digit(begin(line), end(line));
-	string::const_iterator last;
-	auto found = false;
-	//while !found
-		//answer, start, length = get_next_int(begin(line)+start,end(line))
-		//if(answer<0) break;
-		//if(answer>0 && start >= index-1 && start + length <= index+1) ++found;
-		//start += length;
-	//return answer, begin(line)+start;
-	auto end_int = false;
-	while(first!=end(line) && !end_int)
+	int answer = -1;
+	int length = 0;
+	auto is_digit = [](const char c) {return c >= '0' && c <= '9'; };
+	auto it = get_next_digit(first, last);
+	int start = distance(first, it);
+	while(it!=last && is_digit(*it))
 	{
-		int diff = distance(begin(line),end(line));
-		if (diff >= index - 1 && diff <= index + 1)found = true;
-
+		++length;
+		++it;
 	}
+	if (length > 0)answer = stoi(string(first + start, it));
+
+	return make_tuple(answer, start, length);
 }
 
-tuple<int,int,int> get_next_int(){}
+/// \brief 
+/// \param index 
+/// \param first 
+/// \param last 
+/// \return (answer, iterator) where answer is the found int if it exists, or -1 if not; iterator points to the end of the returned int, or last if not found.
+tuple<int, string::const_iterator> get_int_next_to(const int index, const string::const_iterator &first, const string::const_iterator &last)
+{
+	auto found = false;
+	int answer = -1;
+	int start_index = 0;
+	int index_incrememtor = 0;
+	int length = 0;
+	while(!found)
+	{
+		tie(answer, index_incrememtor, length) = get_next_int(first + start_index, last);
+		start_index += index_incrememtor;
+		if (answer < 0)break; //didn't find an int in the specified search area
+		if (start_index <= index + 1 && start_index + length > index - 1) found = true;
+		start_index += length;
+	}
+
+	string::const_iterator it_return;
+	if (answer < 0) it_return = last;
+	else it_return = first + start_index;
+	return make_tuple(answer, it_return);
+}
 
 int get_power(int index, string before, string line, string after)
 {
@@ -98,6 +121,7 @@ int diff = distance(begin(before), first_b);
 		}
 		
 	}
+	return 0;
 }
 
 string get_padded_string(const string& str)
@@ -165,12 +189,64 @@ void day3::run()
 {
 	int sum = 0;
 
-	//string line1 = ".1....58.."; //58
-	//string line2 = ".....+755."; //813
-	//string line3 = "...$.*...."; //813
-	//string line4 = ".664.598.."; //2075
-	//auto b = scan(begin(line1), end(line1));
-	//cout << "Line 1 Expected: false; actual: " << (b ? "true" : "false") << endl;
+	const string line1 = ".1....58.."; //0
+	const string line2 = ".....+755."; //0
+	const string line3 = "...$.*...."; //755*598, is_gear=true;
+	const string line4 = ".664.59..."; //
+	auto star = get_next_star(begin(line3), end(line3));
+	auto star_index = distance(begin(line3), star);
+	auto b = is_gear(begin(line2) + star_index, star, begin(line4) + star_index);
+	cout << "Star 1 Expected: true; actual: " << (b ? "true" : "false") << endl;
+	
+	int result, start, length;
+	tie(result, start, length) = get_next_int(begin(line4), end(line4));
+	cout << "Line 4 first int Expected: 664, 1, 3; actual: " << result << ", " << start << ", " << length << endl;
+
+	tie(result, start, length) = get_next_int(begin(line4) + start + length, end(line4));
+	cout << "Line 4 second int Expected: 59, 5, 2; actual: " << result << ", " << start << ", " << length << endl;
+
+	auto first = begin(line1);
+	while(first!=end(line1))
+	{
+		tie(result, start, length) = get_next_int(first, end(line1));
+		if (result >= 0) cout << "Found " << result << " at index " << start << " with length " << length << endl;
+		else break;
+		first += start + length;
+		sum += result;
+	}
+
+	int gear_power = 0;
+	int num1 = -1, num2 = -1;
+	int nums_found = 0;
+	for (auto line : { line2,line3,line4 })
+	{
+		first = begin(line);
+		auto last = end(line);
+		while (first != last)
+		{
+			tie(result, first) = get_int_next_to(star_index, first, last);
+			if (result >= 0) {
+				if (gear_power == 0)
+				{
+					gear_power = result;
+					num1 = result;
+					++nums_found;
+				}
+				else
+				{
+					gear_power *= result;
+					num2 = result;
+					++nums_found;
+					break;
+				}
+			}
+			else break;
+		}
+		if (nums_found > 1)break;
+	}
+	cout << "Numbers found for gear: " << num1 << " and " << num2 << endl;
+	cout << "Gear Power: " << gear_power << endl;
+
 	//b = scan(begin(line2), end(line2));
 	//cout << "Line 2 Expected: false; actual: " << (b ? "true" : "false") << endl;
 	//b = scan(begin(line3), end(line3));
@@ -203,12 +279,12 @@ void day3::run()
 	//sum += sum_line(line3, line4, line4);
 	//cout << line3 << endl << line4 << endl << line4 << endl << "Sum: " << sum << endl << endl;
 
-	ifstream file("day3_input.txt");
-	if (file.is_open())
-	{
-		sum = do_work(file);
-	}
-	file.close();
+	//ifstream file("day3_input.txt");
+	//if (file.is_open())
+	//{
+	//	sum = do_work(file);
+	//}
+	//file.close();
 	
 	cout << sum;
 }
