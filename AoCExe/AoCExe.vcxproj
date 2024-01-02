@@ -21,13 +21,13 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2da1f3cf-a544-4f7a-8763-3c29f421e505}</ProjectGuid>
-    <RootNamespace>AoC2023</RootNamespace>
+    <ProjectGuid>{f9967f3d-adb7-4833-ad59-0f402fc1473f}</ProjectGuid>
+    <RootNamespace>AoCExe</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\dev\test\AoC2023\AoC2023;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,14 +140,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="day1.cpp" />
-    <ClCompile Include="day2.cpp" />
-    <ClCompile Include="day3.cpp" />
+    <ClCompile Include="AoCExe.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="day1.h" />
-    <ClInclude Include="day2.h" />
-    <ClInclude Include="day3.h" />
+    <ProjectReference Include="..\AoC2023\AoC2023.vcxproj">
+      <Project>{2da1f3cf-a544-4f7a-8763-3c29f421e505}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="day1_input.txt" />
+    <Text Include="day2_input.txt" />
+    <Text Include="day3_input.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

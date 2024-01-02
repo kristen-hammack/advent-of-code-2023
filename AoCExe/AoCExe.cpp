@@ -9,11 +9,11 @@
 
 int main()
 {
-    std::cout << "Day 1: ";
+	std::cout << "Day 1: ";
 	day1::run();
-    std::cout << std::endl << "Day 2: ";
+	std::cout << std::endl << "Day 2: ";
 	day2::run();
-    std::cout<< std::endl << "Day 3: ";
+	std::cout<< std::endl << "Day 3: ";
 	day3::run();
 	std::cout << std::endl;
 }
