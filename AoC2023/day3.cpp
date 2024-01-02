@@ -11,7 +11,7 @@ using namespace std;
 int scan(const string::const_iterator& first, const string::const_iterator& last)
 {
 	const regex r("\\d+");
-	auto result_begin = sregex_iterator(first, last+1, r);
+	auto result_begin = sregex_iterator(first, last + 1, r);
 	auto result_end = sregex_iterator();
 	return distance(result_begin, result_end);
 }
@@ -32,6 +32,11 @@ string::const_iterator get_next_star(const string::const_iterator& first, const 
 	return find_if(first, last, search);
 }
 
+/// \brief 
+/// \param first 
+/// \param last 
+/// \return tuple(answer, start, length), where answer is the next int,
+/// start is the start index of the int, and length is the length of the int in characters.
 tuple<int,int,int> get_next_int(const string::const_iterator& first, const string::const_iterator& last)
 {
 	int answer = -1;
@@ -101,11 +106,11 @@ int get_gear_power(const string& before, const string& star_line, const string& 
 		int relative_index = star_index;
 		auto first = cbegin(line);
 		auto last = cend(line);
-		while (first != last)
+		while (first != last && relative_index > -2)
 		{
 			tie(result, first) = get_int_next_to(relative_index, first, last);
 			if (result >= 0) {
-				if (gear_power == 0)
+				if (nums_found == 0)
 				{
 					gear_power = result;
 					++nums_found;
@@ -116,7 +121,7 @@ int get_gear_power(const string& before, const string& star_line, const string& 
 					++nums_found;
 					break;
 				}
-				relative_index = distance(cbegin(line), first) - relative_index;
+				relative_index -= distance(cbegin(line), first);
 			}
 			else break;
 		}
@@ -134,7 +139,7 @@ int sum_line(const string& line_before, const string& str, const string& line_af
 	const auto start_p_before = begin(p_before);
 	const auto start_p_after = begin(p_after);
 
-	int sum = 0;
+	int sum = 0;// int gears = 0;
 	auto star = get_next_star(begin(p_string), end(p_string));
 	while (star != end(p_string))
 	{
@@ -143,6 +148,7 @@ int sum_line(const string& line_before, const string& str, const string& line_af
 		auto after = start_p_after + offset;
 		if (is_gear(before, star, after))
 		{
+			//++gears;
 			//cout << endl << line_before << endl << str << endl << line_after << endl << "Gear Power (Gear at " << offset - 1 << "): ";
 			const int gear_power = get_gear_power(p_before, p_string, p_after, offset);
 			//cout << gear_power << endl;
@@ -151,6 +157,7 @@ int sum_line(const string& line_before, const string& str, const string& line_af
 		star = get_next_star(star + 1, end(p_string));
 	}
 	//cout << endl << line_before << endl << str << endl << line_after << endl << "Sum: " << sum << endl;
+	//cout << "Gears on line (" << str << "): " << gears << endl;
 	return sum;
 }
 
