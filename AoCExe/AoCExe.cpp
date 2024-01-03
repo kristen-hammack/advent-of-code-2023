@@ -6,6 +6,7 @@
 #include "day1.h"
 #include "day2.h"
 #include "day3.h"
+#include "day4.h"
 
 int main()
 {
@@ -15,5 +16,7 @@ int main()
 	day2::run();
 	std::cout<< std::endl << "Day 3: ";
 	day3::run();
+	std::cout<< std::endl << "Day 4: ";
+	day4::run();
 	std::cout << std::endl;
 }
