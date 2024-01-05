@@ -13,6 +13,7 @@ string::const_iterator get_next_non_digit(const string::const_iterator& first, c
 string get_padded_string(const string& str);
 int sum_line(const string& line_before, const string& str, const string& line_after);
 tuple<int, int, int> get_next_int(const string::const_iterator& first, const string::const_iterator& last);
+tuple<long long, int, int> get_next_llong(const string::const_iterator& first, const string::const_iterator& last);
 string::const_iterator get_next_star(const string::const_iterator& first, const string::const_iterator& last);
 tuple<int, string::const_iterator> get_int_next_to(const int index, const string::const_iterator& first, const string::const_iterator& last);
 bool is_gear(const string::const_iterator& before, const string::const_iterator& star, const string::const_iterator& after);

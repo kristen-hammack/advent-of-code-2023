@@ -55,6 +55,28 @@ tuple<int,int,int> get_next_int(const string::const_iterator& first, const strin
 }
 
 /// \brief 
+/// \param first 
+/// \param last 
+/// \return tuple(answer, start, length), where answer is the next long,
+/// start is the start index of the long, and length is the length of the long in characters.
+tuple<long long,int,int> get_next_llong(const string::const_iterator& first, const string::const_iterator& last)
+{
+	long long answer = -1;
+	int length = 0;
+	auto is_digit = [](const char c) {return c >= '0' && c <= '9'; };
+	auto it = get_next_digit(first, last);
+	int start = distance(first, it);
+	while(it < last && is_digit(*it))
+	{
+		++length;
+		++it;
+	}
+	if (length > 0)answer = stoll(string(first + start, it));
+
+	return make_tuple(answer, start, length);
+}
+
+/// \brief 
 /// \param index 
 /// \param first 
 /// \param last 
