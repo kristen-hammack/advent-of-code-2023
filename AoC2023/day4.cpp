@@ -13,6 +13,7 @@ using namespace std;
 class card
 {
 public:
+	int copies;
 	explicit card(const string& str)
 	{
 		win = {};
@@ -37,26 +38,37 @@ public:
 			actual.emplace_back(result);
 			first += start + length;
 		}
+		copies = 1;
 	}
 
-	double winnings() const
+	int winnings() const
 	{
 		int wins = 0;
 		for (auto num : actual	)
 		{
 			if (find(begin(win), end(win), num) != end(win)) ++wins;
 		}
-		if (wins == 0)return 0;
-		return pow(2, wins - 1);
+		return wins;
 	}
 private:
 	vector<int> win;
 	vector<int> actual;
 };
 
+void copy_down(vector<card>::iterator first, const vector<card>::iterator& last, const int times,const int copies)
+{
+	int i = 0;
+	while (first != last && i < times)
+	{
+		first->copies += copies;
+		i++;
+		++first;
+	}
+}
+
 void day4::run()
 {
-	double sum = 0;
+	int sum = 0;
 
 	ifstream file("day4_input.txt");
 	vector<card> cards;
@@ -69,9 +81,10 @@ void day4::run()
 		}
 	}
 	file.close();
-	for(const auto& card : cards)
+	for (auto it = begin(cards); it < end(cards); ++it)
 	{
-		sum += card.winnings();
+		sum += it->copies;
+		copy_down(it + 1, end(cards), it->winnings(), it->copies);
 	}
 
 	cout << sum;
