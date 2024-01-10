@@ -6,6 +6,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <thread>
 using namespace std;
 
 
@@ -124,9 +125,15 @@ void day5::run()
 	file.close();
 
 	if (seeds.empty())return;
-	for (auto seed : seeds)
+	vector<thread> threads;
+	threads.reserve(seeds.size());
+	for (const auto seed : seeds)
 	{
-		seed.set_lowest(maps);
+		threads.emplace_back(&seed::set_lowest, ref(seed), maps);
+	}
+	for (auto& thread : threads)
+	{
+		thread.join();
 	}
 	long long lowest = seeds[0].lowest;
 	for (auto seed : seeds)
