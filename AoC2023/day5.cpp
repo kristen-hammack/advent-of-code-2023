@@ -90,6 +90,7 @@ void day5::run()
 				maps.emplace_back(m);
 				m = map();
 				getline(file, line); //throw away header line
+				continue;
 			}
 			m.lines.emplace_back(line);
 		}
@@ -103,6 +104,7 @@ void day5::run()
 			if (lowest == -1)lowest = answer;
 			else lowest = min(lowest, answer);
 		}
+		maps.emplace_back(m);
 	}
 	file.close();
 
