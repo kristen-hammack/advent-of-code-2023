@@ -55,17 +55,37 @@ public:
 	}
 };
 
+class seed
+{
+public:
+	long long start;
+	long long range;
+	long long lowest = -1;
+	void set_lowest(const vector<map>& maps)
+	{
+		for (long long i = 0; i < range; i++) {
+			auto answer = start + i;
+			for (const auto& map : maps)
+			{
+				answer = map.map_to_second(answer);
+			}
+			if (lowest == -1)lowest = answer;
+			else lowest = min(lowest, answer);
+		}
+	}
+};
+
+
 
 
 void day5::run()
 {
-	long long lowest = -1;
+	vector<seed> seeds;
+	vector<map> maps;
 
 	ifstream file("day5_input.txt");
 	if (file.is_open())
 	{
-		vector<long long> seeds;
-		vector<map> maps;
 		string line;
 		if (getline(file, line))
 		{
@@ -75,8 +95,13 @@ void day5::run()
 			{
 				long long result; int start, length;
 				tie(result, start, length) = get_next_llong(first, last);
+				first += start + length;
 				if (result < 0)break;
-				seeds.emplace_back(result);
+				seed s;
+				s.start = result;
+				tie(result, start, length) = get_next_llong(first, last);
+				s.range = result;
+				seeds.emplace_back(s);
 				first += start + length;
 			}
 		}
@@ -94,19 +119,20 @@ void day5::run()
 			}
 			m.lines.emplace_back(line);
 		}
-		for (const auto seed : seeds)
-		{
-			auto answer = seed;
-			for (const auto& map : maps)
-			{
-				answer = map.map_to_second(answer);
-			}
-			if (lowest == -1)lowest = answer;
-			else lowest = min(lowest, answer);
-		}
 		maps.emplace_back(m);
 	}
 	file.close();
+
+	if (seeds.empty())return;
+	for (auto seed : seeds)
+	{
+		seed.set_lowest(maps);
+	}
+	long long lowest = seeds[0].lowest;
+	for (auto seed : seeds)
+	{
+		lowest = min(lowest, seed.lowest);
+	}
 
 	cout << lowest;
 }
