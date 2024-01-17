@@ -9,15 +9,16 @@
 using namespace std;
 
 
-vector<int> get_ints(const string& line)
+vector<long long> get_llongs(const string& line)
 {
-	vector<int>result;
+	vector<long long>result;
 	auto first = begin(line);
 	const auto last = end(line);
-	int i, start, length;
+	long long i;
+	int start, length;
 	while (first < last)
 	{
-		tie(i, start, length) = get_next_int(first, last);
+		tie(i, start, length) = get_next_llong(first, last);
 		if (i < 0)break;
 		result.emplace_back(i);
 		first += start + length;
@@ -26,10 +27,10 @@ vector<int> get_ints(const string& line)
 }
 
 
-int get_better_options(const int time, const int distance)
+int get_better_options(const long long time, const long long distance)
 {
 	int answer = 0;
-	for(int t=0;t<time;t++)
+	for(long long t=0;t<time;t++)
 	{
 		if (t * (time - t) > distance)++answer;
 	}
@@ -38,15 +39,15 @@ int get_better_options(const int time, const int distance)
 
 void day6::run()
 {
-	int sum = 1;
-	vector<int> times;
-	vector<int> distances;
+	long long sum = 1;
+	vector<long long> times;
+	vector<long long> distances;
 	ifstream file("day6_input.txt");
 	if (file.is_open())
 	{
 		string line;
-		if (getline(file, line)) times = get_ints(line);
-		if (getline(file, line)) distances = get_ints(line);
+		if (getline(file, line)) times = get_llongs(line);
+		if (getline(file, line)) distances = get_llongs(line);
 	}
 	file.close();
 	for (size_t i=0;i<times.size();i++)
