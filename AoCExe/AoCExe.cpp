@@ -8,6 +8,7 @@
 #include "day3.h"
 #include "day4.h"
 #include "day5.h"
+#include "day6.h"
 
 int main()
 {
@@ -36,6 +37,7 @@ int main()
 		break;
 	default:
 		cout << endl << "Current day: ";
+		day6::run();
 	}
 		
 	cout << endl;
