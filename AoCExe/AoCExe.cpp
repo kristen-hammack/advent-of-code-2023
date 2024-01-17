@@ -11,15 +11,32 @@
 
 int main()
 {
-	std::cout << "Day 1: ";
-	day1::run();
-	std::cout << std::endl << "Day 2: ";
-	day2::run();
-	std::cout<< std::endl << "Day 3: ";
-	day3::run();
-	std::cout<< std::endl << "Day 4: ";
-	day4::run();
-	std::cout<< std::endl << "Day 5: ";
-	day5::run();
-	std::cout << std::endl;
+	int day;
+	cout << "Enter the puzzle to run: ";
+	cin >> day;
+	switch (day) {
+	case 1:
+		cout << endl << "Day 1: ";
+		day1::run();
+		break;
+	case 2:
+		cout << endl << "Day 2: ";
+		day2::run();
+		break;
+	case 3:
+		cout << endl << "Day 3: ";
+		day3::run();
+		break;
+	case 4:
+		cout << endl << "Day 4: ";
+		day4::run();
+		break;
+	case 5:cout << endl << "Day 5: ";
+		day5::run();
+		break;
+	default:
+		cout << endl << "Current day: ";
+	}
+		
+	cout << endl;
 }

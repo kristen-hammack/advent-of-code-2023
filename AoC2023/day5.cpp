@@ -6,7 +6,8 @@
 #include <string>
 #include <tuple>
 #include <vector>
-#include <thread>
+#include <future>
+#include <queue>
 using namespace std;
 
 
@@ -61,23 +62,22 @@ class seed
 public:
 	long long start;
 	long long range;
-	long long lowest = -1;
-	void set_lowest(const vector<map>& maps)
-	{
-		for (long long i = 0; i < range; i++) {
-			auto answer = start + i;
-			for (const auto& map : maps)
-			{
-				answer = map.map_to_second(answer);
-			}
-			if (lowest == -1)lowest = answer;
-			else lowest = min(lowest, answer);
-		}
-	}
 };
 
-
-
+long long get_lowest(const seed& seed, const vector<map>& maps)
+{
+	long long lowest = -1;
+	for (long long i = seed.start; i < seed.range + seed.start; i++) {
+		auto answer = i;
+		for (const auto& map : maps)
+		{
+			answer = map.map_to_second(answer);
+		}
+		if (lowest == -1)lowest = answer;
+		else lowest = min(lowest, answer);
+	}
+	return lowest;
+}
 
 void day5::run()
 {
@@ -125,20 +125,19 @@ void day5::run()
 	file.close();
 
 	if (seeds.empty())return;
-	vector<thread> threads;
-	threads.reserve(seeds.size());
+	queue<future<long long>> futures;
 	for (const auto seed : seeds)
 	{
-		threads.emplace_back(&seed::set_lowest, ref(seed), maps);
+		futures.push(async(get_lowest, seed, maps));
 	}
-	for (auto& thread : threads)
+	long long lowest = -1;
+	while(!futures.empty())
 	{
-		thread.join();
-	}
-	long long lowest = seeds[0].lowest;
-	for (auto seed : seeds)
-	{
-		lowest = min(lowest, seed.lowest);
+		if (futures.front().wait_for(0ms) == future_status::ready) {
+			if (lowest < 0)lowest = futures.front().get();
+			else lowest = min(lowest, futures.front().get());
+			futures.pop();
+		}
 	}
 
 	cout << lowest;
