@@ -9,6 +9,7 @@
 #include "day4.h"
 #include "day5.h"
 #include "day6.h"
+#include "day7.h"
 
 int main()
 {
@@ -32,12 +33,17 @@ int main()
 		cout << endl << "Day 4: ";
 		day4::run();
 		break;
-	case 5:cout << endl << "Day 5: ";
+	case 5:
+		cout << endl << "Day 5: ";
 		day5::run();
+		break;
+	case 6:
+		cout << endl << "Day 6: ";
+		day6::run();
 		break;
 	default:
 		cout << endl << "Current day: ";
-		day6::run();
+		day7::run();
 	}
 		
 	cout << endl;
